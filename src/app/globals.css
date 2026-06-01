@@ -3,23 +3,24 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: light;
-  --background: #f4f7fb;
-  --surface: rgba(255, 255, 255, 0.88);
-  --surface-strong: #ffffff;
-  --surface-muted: #eef4fb;
-  --line: rgba(148, 163, 184, 0.2);
-  --line-strong: rgba(148, 163, 184, 0.35);
-  --text: #102033;
-  --text-muted: #5f7088;
-  --text-soft: #7c8ca3;
-  --brand: #2f6fed;
-  --brand-soft: rgba(47, 111, 237, 0.12);
-  --success: #0f9f6e;
-  --warning: #c4821b;
-  --danger: #c94b52;
-  --shadow-lg: 0 24px 60px rgba(15, 23, 42, 0.08);
-  --shadow-md: 0 16px 40px rgba(15, 23, 42, 0.06);
+  color-scheme: dark;
+  --background: #08111f;
+  --surface: rgba(15, 29, 53, 0.9);
+  --surface-strong: #132744;
+  --surface-muted: #0d1f38;
+  --line: rgba(148, 163, 184, 0.16);
+  --line-strong: rgba(103, 232, 249, 0.36);
+  --text: #f8fbff;
+  --text-muted: #a9b8cf;
+  --text-soft: #7f93b2;
+  --brand: #5dd6ff;
+  --brand-strong: #3182f6;
+  --brand-soft: rgba(93, 214, 255, 0.14);
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #fb7185;
+  --shadow-lg: 0 28px 70px rgba(1, 8, 20, 0.52);
+  --shadow-md: 0 18px 44px rgba(1, 8, 20, 0.44);
   --radius-xl: 28px;
   --radius-lg: 22px;
   --radius-md: 16px;
@@ -37,8 +38,9 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(47, 111, 237, 0.08), transparent 28%),
-    linear-gradient(180deg, #f8fbff 0%, var(--background) 48%, #edf3f9 100%);
+    radial-gradient(circle at top left, rgba(93, 214, 255, 0.18), transparent 26%),
+    radial-gradient(circle at top right, rgba(49, 130, 246, 0.14), transparent 30%),
+    linear-gradient(180deg, #0a1628 0%, #08111f 48%, #050b16 100%);
   color: var(--text);
   font-family: var(--font-geist-sans), sans-serif;
 }
@@ -81,7 +83,8 @@ textarea {
   flex: 1;
   border: 1px solid var(--line);
   border-radius: var(--radius-xl);
-  background: var(--surface);
+  background:
+    linear-gradient(180deg, rgba(17, 33, 59, 0.94), rgba(10, 22, 40, 0.96));
   box-shadow: var(--shadow-md);
   backdrop-filter: blur(18px);
   padding: 24px;
@@ -105,12 +108,40 @@ textarea {
   flex-direction: column;
   gap: 28px;
   border-radius: var(--radius-xl);
+  background:
+    linear-gradient(180deg, rgba(18, 36, 64, 0.98), rgba(10, 22, 40, 0.98));
   padding: 28px 22px;
 }
 
 .app-sidebar__brand {
   padding-bottom: 22px;
   border-bottom: 1px solid var(--line);
+}
+
+.app-sidebar__footer {
+  margin-top: auto;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+}
+
+.app-sidebar__footer-label,
+.app-sidebar__footer-value {
+  margin: 0;
+}
+
+.app-sidebar__footer-label {
+  color: var(--text-soft);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.app-sidebar__footer-value {
+  margin-top: 8px;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .app-sidebar__eyebrow,
@@ -138,6 +169,7 @@ textarea {
 .app-sidebar__title {
   font-size: 1.65rem;
   line-height: 1.1;
+  color: var(--text);
 }
 
 .app-sidebar__role,
@@ -159,7 +191,7 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid transparent;
+  border: 1px solid rgba(148, 163, 184, 0.08);
   border-radius: 14px;
   padding: 12px 14px;
   color: var(--text-muted);
@@ -174,7 +206,11 @@ textarea {
 .app-sidebar__link:hover,
 .app-sidebar__link:focus-visible {
   border-color: var(--line-strong);
-  background: var(--surface-strong);
+  background: linear-gradient(
+    135deg,
+    rgba(93, 214, 255, 0.12) 0%,
+    rgba(49, 130, 246, 0.1) 100%
+  );
   color: var(--text);
   outline: none;
   transform: translateX(2px);
@@ -185,12 +221,15 @@ textarea {
   flex-direction: column;
   gap: 18px;
   border-radius: var(--radius-xl);
+  background:
+    linear-gradient(135deg, rgba(17, 33, 59, 0.96), rgba(11, 23, 43, 0.96));
   padding: 24px;
 }
 
 .app-header__title {
   font-size: clamp(2rem, 4vw, 2.9rem);
   line-height: 0.98;
+  color: var(--text);
 }
 
 .app-header__meta {
@@ -213,13 +252,13 @@ textarea {
 }
 
 .app-header__pill {
-  background: var(--surface-strong);
+  background: rgba(248, 251, 255, 0.03);
   border: 1px solid var(--line);
 }
 
 .app-header__supporting {
-  background: var(--brand-soft);
-  color: var(--brand);
+  background: linear-gradient(135deg, rgba(93, 214, 255, 0.14), rgba(49, 130, 246, 0.14));
+  color: #d9f7ff;
 }
 
 .app-header__dot {
@@ -227,7 +266,7 @@ textarea {
   height: 9px;
   border-radius: 999px;
   background: var(--brand);
-  box-shadow: 0 0 0 6px rgba(47, 111, 237, 0.12);
+  box-shadow: 0 0 0 6px rgba(93, 214, 255, 0.12);
 }
 
 .page-header {
@@ -235,11 +274,14 @@ textarea {
   flex-direction: column;
   gap: 16px;
   border-radius: var(--radius-lg);
+  background:
+    linear-gradient(135deg, rgba(17, 33, 59, 0.92), rgba(10, 22, 40, 0.94));
   padding: 24px;
 }
 
 .page-header__title {
   font-size: clamp(1.5rem, 3vw, 2.2rem);
+  color: var(--text);
 }
 
 .page-header__actions {
@@ -250,6 +292,8 @@ textarea {
 
 .stat-card {
   border-radius: var(--radius-lg);
+  background:
+    linear-gradient(180deg, rgba(17, 33, 59, 0.94), rgba(12, 24, 43, 0.96));
   padding: 22px;
 }
 
@@ -274,6 +318,7 @@ textarea {
 
 .stat-card__value {
   margin: 18px 0 8px;
+  color: var(--text);
   font-size: clamp(2rem, 5vw, 2.8rem);
   font-weight: 700;
   letter-spacing: -0.04em;
@@ -296,8 +341,8 @@ textarea {
   min-width: 44px;
   min-height: 44px;
   border-radius: 14px;
-  background: var(--brand-soft);
-  color: var(--brand);
+  background: linear-gradient(135deg, rgba(93, 214, 255, 0.12), rgba(49, 130, 246, 0.12));
+  color: #dff8ff;
 }
 
 .filter-bar {
@@ -312,7 +357,7 @@ textarea {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 14px;
-  background: var(--surface-strong);
+  background: rgba(248, 251, 255, 0.03);
   color: var(--text);
   padding: 12px 14px;
 }
@@ -392,7 +437,7 @@ textarea {
 
 .status-badge--neutral {
   background: rgba(148, 163, 184, 0.14);
-  color: #516173;
+  color: #c8d3e4;
 }
 
 .status-badge--info {
@@ -418,7 +463,7 @@ textarea {
 .button-primary {
   border: 0;
   border-radius: 999px;
-  background: linear-gradient(135deg, #2f6fed 0%, #4c88ff 100%);
+  background: linear-gradient(135deg, #5dd6ff 0%, #3182f6 100%);
   color: #ffffff;
   cursor: pointer;
   font-weight: 700;

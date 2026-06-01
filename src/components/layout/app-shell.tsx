@@ -2,10 +2,11 @@ import React, { type ReactNode } from "react";
 
 import { AppHeader } from "./app-header";
 import { AppSidebar } from "./app-sidebar";
+import type { MembershipRole } from "../../types/database";
 
 type AppShellProps = {
   children: ReactNode;
-  role: string | null;
+  role: MembershipRole | null;
 };
 
 export function AppShell({ children, role }: AppShellProps) {
