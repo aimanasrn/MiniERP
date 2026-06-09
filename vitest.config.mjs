@@ -14,6 +14,7 @@ const config = defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
+    exclude: [".worktrees/**", "node_modules/**"],
   },
 });
 

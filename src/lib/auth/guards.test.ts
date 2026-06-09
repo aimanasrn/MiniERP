@@ -21,12 +21,21 @@ function createSession(
       created_at: "2026-05-28T00:00:00.000Z",
     },
     profile: null,
-    membership: {
+    memberships: [
+      {
+        company_id: "company-1",
+        role: "company_admin",
+        status: "active",
+        joined_at: "2026-05-28T00:00:00.000Z",
+      },
+    ],
+    currentMembership: {
       company_id: "company-1",
       role: "company_admin",
       status: "active",
       joined_at: "2026-05-28T00:00:00.000Z",
     },
+    requiresCompanySelection: false,
     companyId: "company-1",
     role: "company_admin",
     isPlatformAdmin: false,
@@ -79,7 +88,15 @@ describe("route guard helpers", () => {
 
   it("redirects unauthorized authenticated requests to the allowed landing page", () => {
     const employeeSession = createSession({
-      membership: {
+      memberships: [
+        {
+          company_id: "company-1",
+          role: "employee",
+          status: "active",
+          joined_at: "2026-05-28T00:00:00.000Z",
+        },
+      ],
+      currentMembership: {
         company_id: "company-1",
         role: "employee",
         status: "active",
@@ -110,7 +127,6 @@ describe("route guard helpers", () => {
         },
       ],
       currentMembership: null,
-      membership: null,
       companyId: null,
       role: null,
       requiresCompanySelection: true,

@@ -1,8 +1,16 @@
 import type { User } from "@supabase/supabase-js";
+import { cookies } from "next/headers";
 
 import type { AppSupabaseClient } from "../supabase/server";
 import { createSupabaseServerClient } from "../supabase/server";
 import type { MembershipRole, ProfileStatus } from "../../types/database";
+import {
+  DEMO_COMPANY_ID,
+  DEMO_JOINED_AT,
+  DEMO_SESSION_COOKIE,
+  isDemoRole,
+} from "./demo";
+import { getAuthMode } from "./mode";
 
 export type SessionProfile = {
   id: string;
@@ -32,24 +40,11 @@ export type AppSession = {
   profile: SessionProfile | null;
   memberships: SessionMembership[];
   currentMembership: SessionMembership | null;
-  membership: SessionMembership | null;
   companyId: string | null;
   role: MembershipRole | null;
   isPlatformAdmin: boolean;
   requiresCompanySelection: boolean;
 };
-
-function isMembershipRole(value: unknown): value is MembershipRole {
-  return (
-    value === "super_admin" ||
-    value === "company_admin" ||
-    value === "hr_manager" ||
-    value === "finance_manager" ||
-    value === "inventory_manager" ||
-    value === "sales_staff" ||
-    value === "employee"
-  );
-}
 
 function isPlatformAdmin(user: User) {
   const role = user.app_metadata?.role;
@@ -59,6 +54,50 @@ function isPlatformAdmin(user: User) {
     role === "super_admin" ||
     (Array.isArray(roles) && roles.includes("super_admin"))
   );
+}
+
+export function getDemoSession(role: MembershipRole): AppSession {
+  const emailLocalPart = role.replaceAll("_", ".");
+  const user = {
+    id: `demo-${role}`,
+    app_metadata: {
+      role,
+      roles: [role],
+    },
+    user_metadata: {},
+    aud: "authenticated",
+    created_at: DEMO_JOINED_AT,
+  } as User;
+  const membership: SessionMembership = {
+    company_id: DEMO_COMPANY_ID,
+    role,
+    status: "active",
+    joined_at: DEMO_JOINED_AT,
+  };
+
+  return {
+    user,
+    profile: {
+      id: user.id,
+      email: `${emailLocalPart}@demo.minierp.local`,
+      full_name: role
+        .split("_")
+        .map((part) => `${part[0]?.toUpperCase() ?? ""}${part.slice(1)}`)
+        .join(" "),
+      avatar_url: null,
+      status: "active" satisfies ProfileStatus,
+    },
+    memberships: [membership],
+    currentMembership: membership,
+    companyId: DEMO_COMPANY_ID,
+    role,
+    isPlatformAdmin: role === "super_admin",
+    requiresCompanySelection: false,
+  };
+}
+
+function isMissingAuthSessionError(error: unknown) {
+  return error instanceof Error && error.name === "AuthSessionMissingError";
 }
 
 export function resolveActiveMembershipContext(
@@ -71,9 +110,7 @@ export function resolveActiveMembershipContext(
       memberships,
       currentMembership,
       companyId: currentMembership.company_id,
-      role: isMembershipRole(currentMembership.role)
-        ? currentMembership.role
-        : null,
+      role: currentMembership.role,
       requiresCompanySelection: false,
     };
   }
@@ -93,6 +130,23 @@ export async function getSession(
     user?: User | null;
   },
 ): Promise<AppSession | null> {
+  const authMode = getAuthMode();
+
+  if (authMode === "setup") {
+    return null;
+  }
+
+  if (authMode === "demo") {
+    const cookieStore = await cookies();
+    const selectedRole = cookieStore.get(DEMO_SESSION_COOKIE)?.value;
+
+    if (!isDemoRole(selectedRole)) {
+      return null;
+    }
+
+    return getDemoSession(selectedRole);
+  }
+
   const supabase = options?.client ?? (await createSupabaseServerClient());
   let user = options?.user ?? null;
 
@@ -103,6 +157,10 @@ export async function getSession(
     } = await supabase.auth.getUser();
 
     if (userError) {
+      if (isMissingAuthSessionError(userError)) {
+        return null;
+      }
+
       throw userError;
     }
 
@@ -146,7 +204,6 @@ export async function getSession(
     profile,
     memberships: membershipContext.memberships,
     currentMembership: membershipContext.currentMembership,
-    membership: membershipContext.currentMembership,
     companyId: membershipContext.companyId,
     role,
     isPlatformAdmin: platformAdmin,
